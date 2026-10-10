@@ -4,7 +4,10 @@
 
 A typing game with a stretchy blob.
 
-<!-- video goes here, e.g. <img src="assets/demo.gif" alt="demo"> -->
+
+
+https://github.com/user-attachments/assets/a63bb5c8-beb8-4719-b9a8-664ddb1c8bf6
+
 
 </div>
 
