@@ -1,0 +1,96 @@
+version: 2
+
+project_name: tez
+
+# CGO is off on purpose. With cgo on, raylib's C code has to be compiled for
+# every target, which needs a cross compiler plus raylib headers for each
+# platform. With cgo off, raylib-go bundles a prebuilt libraylib inside the Go
+# binary and loads it through purego, so the same build works everywhere.
+#
+# The trade-off: the user still needs libffi plus X11/Wayland/GL at runtime,
+# which is why the AUR package below declares them as dependencies.
+builds:
+  - id: tez
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    main: .
+    binary: tez
+    ldflags:
+      - -s -w
+
+archives:
+  - id: tez
+    ids:
+      - tez
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    name_template: "tez_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: "tez_{{ .Version }}_checksums.txt"
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  use: github-native
+  groups:
+    - title: Features
+      regexp: "^.*feat.*$"
+    - title: Fixes
+      regexp: "^.*fix.*$"
+    - title: Other
+      order: 999
+
+release:
+  github:
+    owner: vyrx-dev
+    name: tez
+  draft: false
+  prerelease: auto
+  make_latest: true
+
+# Publishes to AUR. Only runs when AUR_KEY is set, so pushes without the secret
+# still produce the GitHub release and just skip the AUR part.
+aurs:
+  - name: tez-bin
+    homepage: "https://github.com/vyrx-dev/tez"
+    description: "A typing game with a stretchy blob"
+    maintainers:
+      - "vyrx-dev <dev@vyrx.dev>"
+    license: "MIT"
+    private_key: "{{ .Env.AUR_KEY }}"
+
+    # Left empty when AUR_KEY is not set, which makes goreleaser skip the AUR
+    # publish entirely. Releases still work before the AUR repo exists.
+    git_url: '{{ if index .Env "AUR_KEY" }}ssh://aur@aur.archlinux.org/tez-bin.git{{ end }}'
+
+    # Without these the game starts, then panics on a missing libffi or X11,
+    # which reads as a broken package rather than a missing dependency.
+    depends:
+      - libffi
+      - libx11
+      - wayland
+      - mesa
+
+    # Never tried to publish on snapshot builds.
+    disable: "{{ .IsSnapshot }}"
+
+    package: |-
+      install -Dm755 "./tez" "${pkgdir}/usr/bin/tez"
+      install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/tez/LICENSE"

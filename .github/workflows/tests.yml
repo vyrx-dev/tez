@@ -1,0 +1,40 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Version comes from go.mod, so it can never drift out of sync.
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+
+      # The blob physics is pure maths. Everything that touches raylib sits
+      # behind the "test" build tag and is excluded here, so this needs no C
+      # compiler, no raylib headers and no display.
+      - name: Run the maths tests
+        run: go test -tags test -count=1 -v ./...
+
+      - name: Check formatting
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "These files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      # Catches breakage in the no-cgo path, since that is what goreleaser
+      # builds for the release artefacts.
+      - name: Check the no-cgo build
+        run: CGO_ENABLED=0 go build -o /dev/null .
