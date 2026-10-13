@@ -8,10 +8,10 @@ https://github.com/user-attachments/assets/a63bb5c8-beb8-4719-b9a8-664ddb1c8bf6
 
 <br>
 
-> **Heads up:** I'm not a game developer, so there are probably things done
-> wrong or clumsy in here. Be gentle, ha ha.
-
 </div>
+
+> **Heads up:** I'm not a game developer, so there are probably things done
+> wrong or clumsy in here. Be gentle, ha ha. (I'm open to learn more)
 
 ## The blob
 
