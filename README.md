@@ -6,6 +6,11 @@ A typing game with a stretchy blob.
 
 https://github.com/user-attachments/assets/a63bb5c8-beb8-4719-b9a8-664ddb1c8bf6
 
+<br>
+
+> **Heads up:** I'm not a game developer, so there are probably things done
+> wrong or clumsy in here. Be gentle, ha ha.
+
 </div>
 
 ## The blob
@@ -106,9 +111,6 @@ next build.
 
 The sound effects are embedded in the binary from `assets/audio`, so the game
 never writes anything to disk and makes no noise about it if it cannot.
-
-> **Heads up:** I'm not a game developer, so there are probably things done
-> wrong or clumsy in here. Be gentle, ha ha.
 
 ## TODO
 
