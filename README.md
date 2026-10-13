@@ -35,108 +35,61 @@ Two small things worth knowing:
   smear the whole screen. It stays as wide as the blob the whole stretch, so
   it reads as one fat blob being pulled rather than a rubber band.
 
-## Installing & Running
+## Installation
 
-### Arch Linux
-Install the prebuilt binary from the AUR (automatically installs required libraries including sound and OpenGL):
+### Arch Linux (AUR)
 ```sh
 yay -S tez-bin
-tez
 ```
 
-### Nix / NixOS
-Run directly via Flakes with all dependencies pre-bundled:
+### Nix
 ```sh
 nix run github:vyrx-dev/tez
 ```
-Or locally in this directory:
-```sh
-./play.sh
-# or
-nix-shell --run "./tez"
-```
 
-### Ubuntu / Debian
-Download the `.deb` package from the [Releases](https://github.com/vyrx-dev/tez/releases) page:
-```sh
-sudo apt install ./tez_*_linux_amd64.deb
-tez
-```
-Or if running the raw tarball binary, ensure runtime libraries are installed:
-```sh
-sudo apt install libffi8 libasound2 libgl1 libx11-6
-./tez
-```
+### Prebuilt binaries
+Download the latest version for your platform from [Releases](https://github.com/vyrx-dev/tez/releases):
+* **Linux**: `.tar.gz`, `.deb` (Debian/Ubuntu), or `.rpm` (Fedora/RHEL)
+* **macOS**: `tez_*_darwin_all.tar.gz` (Universal)
+* **Windows**: `tez_*_windows_amd64.zip` (Standalone `tez.exe`)
 
-### Fedora
-Download the `.rpm` package from the [Releases](https://github.com/vyrx-dev/tez/releases) page:
-```sh
-sudo dnf install ./tez_*_linux_amd64.rpm
-tez
-```
-Or if running the raw tarball binary:
-```sh
-sudo dnf install libffi alsa-lib mesa-libGL libX11
-./tez
-```
+## Building from source
 
-### Windows
-1. Download `tez_*_windows_amd64.zip` from [Releases](https://github.com/vyrx-dev/tez/releases).
-2. Extract the archive.
-3. Run `tez.exe` in Windows Terminal, PowerShell, or double-click to play! (No extra drivers or dependencies needed).
-
-### macOS
-1. Download `tez_*_darwin_amd64.tar.gz` (Intel) or `tez_*_darwin_arm64.tar.gz` (Apple Silicon) from [Releases](https://github.com/vyrx-dev/tez/releases).
-2. Extract and run `./tez`.
-
----
-
-### Why the game might be silent on Linux
-
-raylib picks its audio backend at runtime. If it cannot find PulseAudio or ALSA
-it falls back to a backend called `Null`, which accepts the audio and plays
-nothing, with no error message. The startup log tells you which one you got:
-
-```
-INFO:     > Backend:       miniaudio | PulseAudio    <- real output
-INFO:     > Backend:       miniaudio | Null          <- silent, no error
-```
-
-If the log says `Null`:
-- On **NixOS**: Run with `./play.sh` or `nix run .` (or through `nix-ld`), which sets up the Nix store library paths.
-- On **Ubuntu/Debian**: Ensure `libasound2` or PulseAudio is installed (`sudo apt install libasound2`).
-- On **Arch/Fedora**: Ensure `alsa-lib` is installed (`sudo pacman -S alsa-lib` / `sudo dnf install alsa-lib`).
-
-## Building
-
-Easiest is the nix shell, which now lives inside this folder:
-
-```sh
-nix-shell --run "go run ."
-```
-
-If you don't have raylib installed, you can skip C entirely. This bundles a
-prebuilt libraylib and needs no compiler:
+You just need Go 1.24+. No C compiler or raylib setup required:
 
 ```sh
 CGO_ENABLED=0 go run .
 ```
 
-To build a binary you can run later, use `go build` instead of `go run`:
-
+To build a binary:
 ```sh
-nix-shell --run "go build -o tez ." && ./tez
+CGO_ENABLED=0 go build -o tez .
 ```
 
-Run `./tez` from inside the nix shell, or use the `play.sh` wrapper, which
-borrows the shell's environment. Outside either one, raylib cannot find
-PulseAudio or ALSA and falls back to a silent `Null` audio backend.
+### Nix
+```sh
+nix run .
+# or in the dev shell:
+nix-shell --run "go run ."
+```
 
+### Tests
 The blob maths doesn't need raylib or a window, so it's tested on its own:
-
 ```sh
 go test -tags test ./...
 ```
+
+### Audio troubleshooting (Linux)
+raylib picks its audio backend at runtime. If it cannot find PulseAudio or ALSA, it silently falls back to `Null` (plays nothing, with no error). Check your startup terminal log:
+
+```
+INFO:     > Backend:       miniaudio | PulseAudio    <- sound works
+INFO:     > Backend:       miniaudio | Null          <- silent fallback
+```
+
+If you see `Null`:
+* **Standard Linux**: Make sure `alsa-lib` (Arch/Fedora) or `libasound2` (Ubuntu/Debian) is installed.
+* **NixOS**: Run with `steam-run ./tez`, `nix-shell --run "./tez"`, or `nix run .`.
 
 ## What's where
 
@@ -170,11 +123,7 @@ never writes anything to disk and makes no noise about it if it cannot.
 
 ## Contributing
 
-There are comments on the bits that are easy to get wrong: the blob chase in
-`logic.go`, how the game moves between states in `update.go`, and why the
-sounds are generated in `audio.go`. If you spot a mistake, or see something
-that could be tidier, simpler or faster, open a PR. The blob is the fun part,
-so ideas for it are very welcome.
+Contributions, bug reports, and ideas are welcome! Feel free to open an issue or submit a pull request.
 
 ## Credit
 
