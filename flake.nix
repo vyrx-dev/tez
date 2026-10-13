@@ -29,7 +29,7 @@
           # the purego path that needs libffi and friends at runtime.
           env.CGO_ENABLED = 1;
 
-          nativeBuildInputs = [ pkgs.pkg-config ];
+          nativeBuildInputs = [ pkgs.pkg-config pkgs.makeWrapper ];
           buildInputs = with pkgs; [
             raylib
             libGL
@@ -43,6 +43,11 @@
             alsa-lib
             pulseaudio
           ];
+
+          postInstall = ''
+            wrapProgram $out/bin/tez \
+              --prefix LD_LIBRARY_PATH : ${pkgs.lib.makeLibraryPath (with pkgs; [ alsa-lib pulseaudio libGL libx11 wayland libxkbcommon ])}
+          '';
 
           ldflags = [ "-s" "-w" ];
 
