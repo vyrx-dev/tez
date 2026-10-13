@@ -20,10 +20,20 @@ builds:
     goarch:
       - amd64
       - arm64
+    ignore:
+      - goos: linux
+        goarch: arm64
+      - goos: windows
+        goarch: arm64
     main: .
     binary: tez
     ldflags:
       - -s -w
+
+universal_binaries:
+  - id: tez
+    replace: true
+
 
 archives:
   - id: tez
