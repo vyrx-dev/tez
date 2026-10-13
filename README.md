@@ -35,23 +35,63 @@ Two small things worth knowing:
   smear the whole screen. It stays as wide as the blob the whole stretch, so
   it reads as one fat blob being pulled rather than a rubber band.
 
-## Installing
+## Installing & Running
 
-The release binaries are not fully self-contained, because this is a graphical
-game. On Linux they need, in addition to the binary itself:
+### Arch Linux
+Install the prebuilt binary from the AUR (automatically installs required libraries including sound and OpenGL):
+```sh
+yay -S tez-bin
+tez
+```
 
-- `libffi` (the library raylib-go loads raylib through)
-- `libx11`, `wayland`, `mesa` (the window and OpenGL)
-- a running display, so not over SSH without X forwarding
-- PulseAudio or ALSA, otherwise the game runs silently
+### Nix / NixOS
+Run directly via Flakes with all dependencies pre-bundled:
+```sh
+nix run github:vyrx-dev/tez
+```
+Or locally in this directory:
+```sh
+./play.sh
+# or
+nix-shell --run "./tez"
+```
 
-On Arch those are normally already installed. On Windows and macOS the binary
-brings its own raylib and needs nothing extra.
+### Ubuntu / Debian
+Download the `.deb` package from the [Releases](https://github.com/vyrx-dev/tez/releases) page:
+```sh
+sudo apt install ./tez_*_linux_amd64.deb
+tez
+```
+Or if running the raw tarball binary, ensure runtime libraries are installed:
+```sh
+sudo apt install libffi8 libasound2 libgl1 libx11-6
+./tez
+```
 
-The sound effects are embedded in the binary, so there is no data directory to
-install and the game never writes to disk.
+### Fedora
+Download the `.rpm` package from the [Releases](https://github.com/vyrx-dev/tez/releases) page:
+```sh
+sudo dnf install ./tez_*_linux_amd64.rpm
+tez
+```
+Or if running the raw tarball binary:
+```sh
+sudo dnf install libffi alsa-lib mesa-libGL libX11
+./tez
+```
 
-### Why the game might be silent
+### Windows
+1. Download `tez_*_windows_amd64.zip` from [Releases](https://github.com/vyrx-dev/tez/releases).
+2. Extract the archive.
+3. Run `tez.exe` in Windows Terminal, PowerShell, or double-click to play! (No extra drivers or dependencies needed).
+
+### macOS
+1. Download `tez_*_darwin_amd64.tar.gz` (Intel) or `tez_*_darwin_arm64.tar.gz` (Apple Silicon) from [Releases](https://github.com/vyrx-dev/tez/releases).
+2. Extract and run `./tez`.
+
+---
+
+### Why the game might be silent on Linux
 
 raylib picks its audio backend at runtime. If it cannot find PulseAudio or ALSA
 it falls back to a backend called `Null`, which accepts the audio and plays
@@ -62,9 +102,10 @@ INFO:     > Backend:       miniaudio | PulseAudio    <- real output
 INFO:     > Backend:       miniaudio | Null          <- silent, no error
 ```
 
-So if the log says `Null`, the sounds are fine but nothing is being played.
-Install PulseAudio or ALSA, or run the binary from inside the nix shell, which
-puts those libraries on the search path.
+If the log says `Null`:
+- On **NixOS**: Run with `./play.sh` or `nix run .` (or through `nix-ld`), which sets up the Nix store library paths.
+- On **Ubuntu/Debian**: Ensure `libasound2` or PulseAudio is installed (`sudo apt install libasound2`).
+- On **Arch/Fedora**: Ensure `alsa-lib` is installed (`sudo pacman -S alsa-lib` / `sudo dnf install alsa-lib`).
 
 ## Building
 

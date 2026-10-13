@@ -1,5 +1,6 @@
 {pkgs ? import <nixpkgs> {}}: let
   libraries = with pkgs; [
+    libffi
     alsa-lib
     pulseaudio
     libGL

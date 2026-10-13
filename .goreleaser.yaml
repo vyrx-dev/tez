@@ -87,6 +87,7 @@ aurs:
       - libx11
       - wayland
       - mesa
+      - alsa-lib
 
     # Never tried to publish on snapshot builds.
     disable: "{{ .IsSnapshot }}"
@@ -94,3 +95,29 @@ aurs:
     package: |-
       install -Dm755 "./tez" "${pkgdir}/usr/bin/tez"
       install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/tez/LICENSE"
+
+nfpms:
+  - id: tez-pkg
+    package_name: tez
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    vendor: "vyrx-dev"
+    homepage: "https://github.com/vyrx-dev/tez"
+    maintainer: "vyrx-dev <dev@vyrx.dev>"
+    description: "A typing game with a stretchy blob"
+    license: "MIT"
+    formats:
+      - deb
+      - rpm
+    dependencies:
+      - libffi8
+      - libgl1
+      - libasound2
+      - libx11-6
+    overrides:
+      rpm:
+        dependencies:
+          - libffi
+          - mesa-libGL
+          - alsa-lib
+          - libX11
+
