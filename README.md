@@ -4,10 +4,7 @@
 
 A typing game with a stretchy blob.
 
-
-
 https://github.com/user-attachments/assets/a63bb5c8-beb8-4719-b9a8-664ddb1c8bf6
-
 
 </div>
 
@@ -26,10 +23,10 @@ and it's about ten lines in `logic.go`.
 Two small things worth knowing:
 
 - **It looks the same on any monitor.** Both dots ease toward their target
-  with `1 - exp(-speed * dt)`. The simpler `dt * speed` that most people write
-  first drifts: on a 144Hz screen the blob moves slower in real seconds, and
-  on a slow frame it jumps past its target. The exponential one can never
-  overshoot.
+  with `1 - exp(-speed * dt)`. The simpler `dt * speed` step (which I first tested
+  in [blob-physics](https://github.com/vyrx-dev/blob-physics)) drifts: on high refresh
+  screens the blob moves at different speeds, and on a dropped frame it can jump past its target.
+  The exponential form never overshoots.
 - **The stretch is capped.** The dome can only get so long, because the blob's
   resting spot teleports to whatever word it just ate, so uncapped it would
   smear the whole screen. It stays as wide as the blob the whole stretch, so
@@ -115,20 +112,14 @@ never writes anything to disk and makes no noise about it if it cannot.
 
 ## TODO
 
-- [ ] **Death mode**: one wrong letter and it's over, no hearts and no second
-  chances
+- [ ] **Death mode**: one wrong letter and it's over, no hearts and no second chances
 - [ ] more words
 - [ ] difficulty that isn't just "everything got faster"
 - [ ] a combo score for typing words without a slip
 
-## Contributing
-
-Contributions, bug reports, and ideas are welcome! Feel free to open an issue or submit a pull request.
-
 ## Credit
 
-The stretchy blob is my Go version of [rexim's blob](https://gist.github.com/rexim/c1e3c1b99cb824ab6c817c3f45d75564)
-(Rust + SDL3), which is where the two dots idea comes from.
+The stretchy blob is inspired by [Tsoding's blob](https://gist.github.com/rexim/c1e3c1b99cb824ab6c817c3f45d75564) (Rust + SDL3). I first prototyped and verified the mechanics in Go as [blob-physics](https://github.com/vyrx-dev/blob-physics) before building this game on top of it.
 
 ## License
 
