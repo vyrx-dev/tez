@@ -86,9 +86,7 @@ aurs:
     license: "MIT"
     private_key: "{{ .Env.AUR_KEY }}"
 
-    # Left empty when AUR_KEY is not set, which makes goreleaser skip the AUR
-    # publish entirely. Releases still work before the AUR repo exists.
-    git_url: '{{ if index .Env "AUR_KEY" }}ssh://aur@aur.archlinux.org/tez-bin.git{{ end }}'
+    git_url: "ssh://aur@aur.archlinux.org/tez-bin.git"
 
     # Without these the game starts, then panics on a missing libffi or X11,
     # which reads as a broken package rather than a missing dependency.
